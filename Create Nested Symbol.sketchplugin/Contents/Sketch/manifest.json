@@ -16,7 +16,7 @@
     ],
   },
   "identifier" : "com.melludowise.sketch-create-nested-symbol",
-  "version" : "1.0",
+  "version" : "1.1",
   "description" : "Create nested symbols with one easy keyboard shortcut.",
   "name" : "Create Nested Symbol"
 }

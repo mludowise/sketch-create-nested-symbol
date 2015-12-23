@@ -33,6 +33,13 @@ var createSymbol = function(context) {
 		
 		// Prompt user for symbol name
 		var symbolName = [doc askForUserInput:"Symbol Name" initialValue:""];
+		
+		// User hit cancel, exit.
+		if (!symbolName) {
+			throw(nil)
+		}
+		
+		// Check for input
 		if (symbolName == "") {
 			exitWithAlert('Enter a name for the symbol.', 'Name Required')
 		}

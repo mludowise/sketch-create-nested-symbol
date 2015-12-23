@@ -27,11 +27,6 @@ var createSymbol = function(context) {
 		
 		var layer = [selection objectAtIndex:0]
 		
-		// Ensure layer is a group
-		if (!(layer instanceof MSLayerGroup)) {
-			invalidSelection()
-		}
-		
 		// Layer is already a symbol
 		if (layer.isSymbol()) {
 			exitWithAlert('This layer is already a symbol.', 'Already Symbol')
@@ -41,9 +36,28 @@ var createSymbol = function(context) {
 		
 		// Prompt user for symbol name
 		var symbolName = [doc askForUserInput:"Symbol Name" initialValue:""];
+		
+		var group
+		if (layer instanceof MSLayerGroup) { // Layer is already a group
+			group = layer
+		} else { // Create a new group from selection
+			group = MSLayerGroup.new()
+			
+			var parentGroup = layer.parentGroup()
+			parentGroup.removeLayer(layer)
+			parentGroup.addLayers([group])
+			
+			group.setName(symbolName)
+			group.addLayers([layer])
+			group.resizeRoot(true)
+			
+			// Update selection
+			layer.setIsSelected(false)
+			group.setIsSelected(true)
+		}
 
 		var symbols = doc.documentData().layerSymbols()
-		symbols.addSymbolWithName_firstInstance(symbolName, layer)
+		symbols.addSymbolWithName_firstInstance(symbolName, group)
 	} catch(e) {
 		log(e)
 	}

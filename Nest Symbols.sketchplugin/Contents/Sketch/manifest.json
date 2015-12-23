@@ -1,0 +1,23 @@
+{
+  "author" : "Bohemian Coding",
+  "commands" : [
+    {
+      "script" : "script.cocoascript",
+      "handler" : "createSymbol",
+      "shortcut" : "ctrl s",
+      "name" : "Nest Symbols",
+      "identifier" : "createsymbol"
+    },
+  ],
+  "menu": {
+    "isRoot": true,
+    "items": [
+      "createsymbol",
+    ],
+  },
+  "identifier" : "com.melludowise.nestsymbols",
+  "version" : "1.0",
+  "description" : "Example Sketch Plugin using resources from within the bundle and a library script.",
+  "authorEmail" : "mail@example.com",
+  "name" : "Hello World!"
+}

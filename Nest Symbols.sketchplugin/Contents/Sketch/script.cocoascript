@@ -1,0 +1,50 @@
+// Display an error alert
+function alert(msg, title) {
+	title = title || "alert"
+	var app = [NSApplication sharedApplication]
+	[app displayDialog:msg withTitle:title]
+}
+
+// Display an error alert and exit
+function exitWithAlert(message, title) {
+  alert(message, title)
+  throw(nil) // exit the plugin
+}
+
+function invalidSelection() {
+	exitWithAlert('Select a group to convert it to a symbol.', 'Selection Must Be A Group')
+}
+
+var createSymbol = function(context) {
+	try {
+		// Begin validation of selection
+	
+		// Ensure there's only one layer selected
+		var selection = context.selection
+		if ([selection count] != 1) {
+			invalidSelection()
+		}
+		
+		var layer = [selection objectAtIndex:0]
+		
+		// Ensure layer is a group
+		if (!(layer instanceof MSLayerGroup)) {
+			invalidSelection()
+		}
+		
+		// Layer is already a symbol
+		if (layer.isSymbol()) {
+			exitWithAlert('This layer is already a symbol.', 'Already Symbol')
+		}
+		
+		var doc = context.document
+		
+		// Prompt user for symbol name
+		var symbolName = [doc askForUserInput:"Symbol Name" initialValue:""];
+
+		var symbols = doc.documentData().layerSymbols()
+		symbols.addSymbolWithName_firstInstance(symbolName, layer)
+	} catch(e) {
+		log(e)
+	}
+};

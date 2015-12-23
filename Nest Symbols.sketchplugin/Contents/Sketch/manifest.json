@@ -5,7 +5,7 @@
       "script" : "script.cocoascript",
       "handler" : "createSymbol",
       "shortcut" : "ctrl s",
-      "name" : "Nest Symbols",
+      "name" : "Create Nested Symbol",
       "identifier" : "createsymbol"
     },
   ],
@@ -15,9 +15,8 @@
       "createsymbol",
     ],
   },
-  "identifier" : "com.melludowise.nestsymbols",
+  "identifier" : "com.melludowise.sketch-nestsymbols",
   "version" : "1.0",
-  "description" : "Example Sketch Plugin using resources from within the bundle and a library script.",
-  "authorEmail" : "mail@example.com",
-  "name" : "Hello World!"
+  "description" : "Create nested symbols with one easy keyboard shortcut.",
+  "name" : "Create Nested Symbol"
 }

@@ -11,44 +11,16 @@ function exitWithAlert(message, title) {
   throw(nil) // exit the plugin
 }
 
-function invalidSelection() {
-	exitWithAlert('Select a group to convert it to a symbol.', 'Selection Must Be A Group')
-}
-
-function groupLayers(layers, groupName, parentGroup) {
-	var group = MSLayerGroup.new()
-	group.setName(groupName)
-	
-	for (var i=0; i < [layers count]; i++) {
-		var layer = [layers objectAtIndex:i]
-		layer.parentGroup().removeLayer(layer)
-		layer.setIsSelected(false)
-	}
-	
-	group.addLayers([layer])
-	group.resizeRoot(true)
-	group.setIsSelected(true)
-	parentGroup.addLayers([group])
-	
-	return group
-}
-
 var createSymbol = function(context) {
 	try {
 		// Begin validation of selection
 	
-		// Ensure there's only one layer selected
-		var selection = context.selection
-		if ([selection count] != 1) {
-			exitWithAlert('Select exactly one layer to convert it to a symbol.', 'Selection One Layer')
-		}
-		
-		// log(selection)
-		
 		// Ensure at least one layer is selected
-// 		if ([selection count] < 1) {
-// 			exitWithAlert('Select at least one layer to create a symbol.', 'Select Layer(s)')
-// 		}
+		var selection = context.selection
+		// Ensure at least one layer is selected
+		if ([selection count] < 1) {
+			exitWithAlert('Select at least one layer to create a symbol.', 'Select Layer(s)')
+		}
 		
 		var layer = [selection objectAtIndex:0]
 		
@@ -61,19 +33,42 @@ var createSymbol = function(context) {
 		
 		// Prompt user for symbol name
 		var symbolName = [doc askForUserInput:"Symbol Name" initialValue:""];
-		
-		var group
-		if (layer instanceof MSLayerGroup) { // Layer is already a group
-			group = layer
-		} else { // Create a new group from selection
-			var layers = [NSArray arrayWithObject:layer]
-			group = groupLayers(layers, symbolName, layer.parentGroup())
+		if (symbolName == "") {
+			exitWithAlert('Enter a name for the symbol.', 'Name Required')
 		}
-
-		var symbols = doc.documentData().layerSymbols()
-		symbols.addSymbolWithName_firstInstance(symbolName, group)
 		
-// 		alert("done")
+		var symbols = doc.documentData().layerSymbols()
+		
+		if (layer instanceof MSLayerGroup) { // Layer is already a group
+			
+			// Add group to symbols
+			symbols.addSymbolWithName_firstInstance(symbolName, layer)
+			
+			// Toggle selection to refresh UI
+			layer.setIsSelected(false)
+			layer.setIsSelected(true)
+			
+		} else { // Create a new group from selection
+			
+			// Group layers
+			var groupAction = doc.actionsController().actionWithName("MSGroupAction");
+			if (!groupAction.validate()) {
+				exitWithAlert('Could not group layers.')
+			}
+			groupAction.group(nil)
+			
+			// Verify group exists
+			var group = layer.parentGroup()
+			if (!group) {
+				exitWithAlert('Could not group layers.')
+			}
+			
+			// Set group name to symbol name
+			group.setName(symbolName)
+			
+			// Add group to symbols
+			symbols.addSymbolWithName_firstInstance(symbolName, group)
+		}
 	} catch(e) {
 		log(e)
 	}
